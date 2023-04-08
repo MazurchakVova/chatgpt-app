@@ -62,6 +62,8 @@ export const TtsSettingsModal: React.FC<TtsSettingsModalProps> = ({
     handleSubmit();
   };
 
+  console.log(settings.voice?.voiceURI);
+
   return (
     <>
       <Button onClick={() => setIsOpen(true)} size="md" color="gray">
@@ -75,6 +77,7 @@ export const TtsSettingsModal: React.FC<TtsSettingsModalProps> = ({
         size="sm"
         style={{ maxWidth: "380px" }}
       >
+        <label htmlFor="">Скорость - {localRate.toFixed(1)}</label>
         <Slider
           label="Скорость"
           min={0}
@@ -88,6 +91,7 @@ export const TtsSettingsModal: React.FC<TtsSettingsModalProps> = ({
           ]}
         />
         <Box style={{ height: "25px" }} />
+        <label htmlFor="">Громкость {localVolume.toFixed(1)}</label>
         <Slider
           label="Громкость"
           min={0}
@@ -103,7 +107,7 @@ export const TtsSettingsModal: React.FC<TtsSettingsModalProps> = ({
         <Box style={{ height: "25px" }} />
         <Select
           label="Голос"
-          value={settings.voice?.voiceURI || ""}
+          value={settings.voice?.voiceURI || "Google русский"}
           onChange={handleVoiceChange}
           data={voices.map((voice) => ({
             value: voice.voiceURI,

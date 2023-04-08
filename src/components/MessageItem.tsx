@@ -10,7 +10,6 @@ import {
   ThemeIcon,
   Tooltip,
 } from "@mantine/core";
-import { useClipboard } from "@mantine/hooks";
 import { IconCopy, IconUser } from "@tabler/icons-react";
 import { useMemo, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -47,10 +46,11 @@ export function MessageItem({
     if (isPlaying && textToSpeechControl.activeId !== message.id) {
       setIsPlaying(false);
     }
-  }, [textToSpeechControl.activeId]);
+  }, [textToSpeechControl.activeId, isPlaying]);
 
   function speakText(index = 0, chunkSize = 300) {
     const { voice, rate, volume } = ttsSettings;
+    textToSpeechControl.toggleActive(message.id);
 
     if (index < message.content.length) {
       const utterance = new SpeechSynthesisUtterance(
@@ -64,7 +64,6 @@ export function MessageItem({
       utterance.volume = volume;
 
       utterance.onend = () => {
-        console.log("Chunk finished");
         speakText(index + chunkSize, chunkSize);
       };
 
@@ -78,12 +77,12 @@ export function MessageItem({
   const handleTextToSpeechToggle = () => {
     if (isPlaying) {
       window.speechSynthesis.cancel();
+      window.speechSynthesis.resume();
       setIsPlaying(false);
     } else {
-      textToSpeechControl.toggleActive(message.id);
+      setIsPlaying(true);
       speakText();
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (

@@ -70,8 +70,8 @@ export function ChatRoute() {
   const textToSpeechControl = useActiveTextToSpeech();
 
   const [ttsSettings, setTtsSettings] = useState<TtsSettings>({
-    rate: 1,
-    volume: 0.8,
+    rate: 0.9,
+    volume: 0.6,
     voice: null,
   });
 
