@@ -1,16 +1,15 @@
-import React from "react";
 import {
   Box,
   Button,
   Card,
   Container,
   Flex,
-  MediaQuery,
   Select,
   SimpleGrid,
   Skeleton,
   Stack,
   Textarea,
+  TextareaProps,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -33,15 +32,10 @@ import { TtsSettings, TtsSettingsModal } from "../components/TtsSettingsModal";
 
 import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
 
-type SpeechRecognition =
-  | typeof window.SpeechRecognition
-  | typeof window.webkitSpeechRecognition;
-
 declare global {
   interface Window {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
-    mySpeechRecognition: () => Promise<SpeechRecognition>;
   }
 }
 
@@ -82,62 +76,46 @@ export function ChatRoute() {
   });
 
   useEffect(() => {
-    async function initSpeechRecognition() {
-      try {
-        if (window.mySpeechRecognition) {
-          // Если запущено в приложении Electron с preload.js
-          recognitionRef.current = await window.mySpeechRecognition();
-        } else if (
-          window.SpeechRecognition ||
-          (window as any).webkitSpeechRecognition
-        ) {
-          // Если запущено в обычном браузере
-          const SpeechRecognition =
-            window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-          recognitionRef.current = new SpeechRecognition();
-        } else {
-          throw new Error("SpeechRecognition is not supported");
-        }
+    if (window.SpeechRecognition || (window as any).webkitSpeechRecognition) {
+      const SpeechRecognition =
+        window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.lang = "ru-RU";
+      recognitionRef.current.maxAlternatives = 1000;
 
-        recognitionRef.current.interimResults = true;
-        recognitionRef.current.continuous = true;
-        recognitionRef.current.lang = "ru-RU";
-        recognitionRef.current.maxAlternatives = 1000;
+      recognitionRef.current.onerror = (event: any) =>
+        console.error(event.error);
 
-        recognitionRef.current.onerror = (event: any) =>
-          console.error(event.error);
-
-        recognitionRef.current.onresult = (event: any) => {
-          for (let i = event.resultIndex; i < event.results.length; ++i) {
-            if (event.results[i].isFinal) {
-              setContent(
-                (prevState) => prevState + event.results[i][0].transcript
-              );
-              setInterimTranscript("");
-            } else {
-              setInterimTranscript(event.results[i][0].transcript);
-            }
-          }
-        };
-
-        recognitionRef.current.onspeechstart = () => {
-          setIsMicActive(true);
-        };
-
-        recognitionRef.current.onend = () => {
-          if (isRecording) {
-            recognitionRef.current.start();
+      recognitionRef.current.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            setContent(
+              (prevState) => prevState + event.results[i][0].transcript
+            );
+            setInterimTranscript("");
           } else {
-            setIsMicActive(false);
-            setContent((prevState) => prevState + interimTranscript);
+            setInterimTranscript(event.results[i][0].transcript);
           }
-        };
-      } catch (error) {
-        console.log("API распознавания речи не поддерживается этим браузером");
-      }
-    }
+        }
+      };
 
-    initSpeechRecognition();
+      recognitionRef.current.onspeechstart = () => {
+        setIsMicActive(true);
+      };
+
+      recognitionRef.current.onend = () => {
+        if (isRecording) {
+          recognitionRef.current.start();
+        } else {
+          setIsMicActive(false);
+          setContent((prevState) => prevState + interimTranscript);
+        }
+      };
+    } else {
+      console.log("API распознавания речи не поддерживается этим браузером");
+    }
   }, []);
 
   const startRecording = () => {
@@ -405,11 +383,12 @@ export function ChatRoute() {
                 sx={{ flex: 1 }}
                 placeholder="Напишите ваше сообщение..."
                 autosave
+                autosize={true}
+                autoFocus={true}
                 className={isRecording ? "textarea-recording" : ""}
-                autoFocus
                 disabled={submitting}
                 minRows={1}
-                maxRows={5}
+                maxRows={10}
                 value={content}
                 readOnly={isRecording}
                 ref={inputRef}
@@ -451,7 +430,7 @@ export function ChatRoute() {
             </div>
 
             <Button
-              h="auto"
+              size="md"
               onClick={() => {
                 submit();
               }}
