@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { IconCopy, IconUser } from "@tabler/icons-react";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Message } from "../db";
@@ -22,6 +22,7 @@ import { ScrollIntoView } from "./ScrollIntoView";
 import { IconVolumeOff, IconVolume } from "@tabler/icons-react";
 
 type MessageItemProps = {
+  children?: ReactNode;
   message: Message;
   ttsSettings: any;
   textToSpeechControl: {
@@ -34,11 +35,12 @@ export function MessageItem({
   message,
   textToSpeechControl,
   ttsSettings,
+  children,
 }: MessageItemProps) {
   const [isPlaying, setIsPlaying] = useState(false);
 
   const wordCount = useMemo(() => {
-    var matches = message.content.match(/[\w\d\'\'-\(\)]+/gi);
+    const matches = message.content.match(/[\w\d\'\'-\(\)]+/gi);
     return matches ? matches.length : 0;
   }, [message.content]);
 
@@ -109,7 +111,7 @@ export function MessageItem({
                   ) : (
                     <Box sx={{ position: "relative" }}>
                       <Code block {...props} />
-                      <CopyButton value={String(props.children)}>
+                      <CopyButton value={String(children)}>
                         {({ copied, copy }) => (
                           <Tooltip
                             label={copied ? "Copied" : "Copy"}
