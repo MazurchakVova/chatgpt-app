@@ -1,15 +1,5 @@
+import { Badge, Button, Center, Container, Group } from "@mantine/core";
 import {
-  Badge,
-  Button,
-  Center,
-  Container,
-  Group,
-  SimpleGrid,
-  Text,
-  ThemeIcon,
-} from "@mantine/core";
-import {
-  IconCloudDownload,
   IconCurrencyDollar,
   IconKey,
   IconLock,
@@ -38,16 +28,6 @@ export function IndexRoute() {
                 {openAiApiKey ? "Изменить ключ OpenAI" : "Ввести ключ OpenAI"}
               </Button>
             </SettingsModal>
-            {/* {!window.todesktop && (
-              <Button
-                component="a"
-                size="md"
-                variant="outline"
-                leftIcon={<IconCloudDownload size={20} />}
-              >
-                Скачать десктоп приложение
-              </Button>
-            )} */}
           </Group>
         </Container>
       </Center>

@@ -19,7 +19,6 @@ export function MainLink({ icon, color, label, chat }: MainLinkProps) {
   return (
     <UnstyledButton
       sx={(theme) => ({
-        // display: "block",
         width: "100%",
         padding: theme.spacing.xs,
         borderRadius: theme.radius.sm,
