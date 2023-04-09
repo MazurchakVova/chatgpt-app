@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Button,
@@ -31,12 +32,16 @@ import { useActiveTextToSpeech } from "../hooks/useActiveTextToSpeech";
 import { TtsSettings, TtsSettingsModal } from "../components/TtsSettingsModal";
 
 import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
-import React from "react";
+
+type SpeechRecognition =
+  | typeof window.SpeechRecognition
+  | typeof window.webkitSpeechRecognition;
 
 declare global {
   interface Window {
     SpeechRecognition: any;
     webkitSpeechRecognition: any;
+    mySpeechRecognition: () => Promise<SpeechRecognition>;
   }
 }
 
@@ -77,46 +82,62 @@ export function ChatRoute() {
   });
 
   useEffect(() => {
-    if (window.SpeechRecognition || (window as any).webkitSpeechRecognition) {
-      const SpeechRecognition =
-        window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.lang = "ru-RU";
-      recognitionRef.current.maxAlternatives = 1000;
-
-      recognitionRef.current.onerror = (event: any) =>
-        console.error(event.error);
-
-      recognitionRef.current.onresult = (event: any) => {
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            setContent(
-              (prevState) => prevState + event.results[i][0].transcript
-            );
-            setInterimTranscript("");
-          } else {
-            setInterimTranscript(event.results[i][0].transcript);
-          }
-        }
-      };
-
-      recognitionRef.current.onspeechstart = () => {
-        setIsMicActive(true);
-      };
-
-      recognitionRef.current.onend = () => {
-        if (isRecording) {
-          recognitionRef.current.start();
+    async function initSpeechRecognition() {
+      try {
+        if (window.mySpeechRecognition) {
+          // Если запущено в приложении Electron с preload.js
+          recognitionRef.current = await window.mySpeechRecognition();
+        } else if (
+          window.SpeechRecognition ||
+          (window as any).webkitSpeechRecognition
+        ) {
+          // Если запущено в обычном браузере
+          const SpeechRecognition =
+            window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+          recognitionRef.current = new SpeechRecognition();
         } else {
-          setIsMicActive(false);
-          setContent((prevState) => prevState + interimTranscript);
+          throw new Error("SpeechRecognition is not supported");
         }
-      };
-    } else {
-      console.log("API распознавания речи не поддерживается этим браузером");
+
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.lang = "ru-RU";
+        recognitionRef.current.maxAlternatives = 1000;
+
+        recognitionRef.current.onerror = (event: any) =>
+          console.error(event.error);
+
+        recognitionRef.current.onresult = (event: any) => {
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              setContent(
+                (prevState) => prevState + event.results[i][0].transcript
+              );
+              setInterimTranscript("");
+            } else {
+              setInterimTranscript(event.results[i][0].transcript);
+            }
+          }
+        };
+
+        recognitionRef.current.onspeechstart = () => {
+          setIsMicActive(true);
+        };
+
+        recognitionRef.current.onend = () => {
+          if (isRecording) {
+            recognitionRef.current.start();
+          } else {
+            setIsMicActive(false);
+            setContent((prevState) => prevState + interimTranscript);
+          }
+        };
+      } catch (error) {
+        console.log("API распознавания речи не поддерживается этим браузером");
+      }
     }
+
+    initSpeechRecognition();
   }, []);
 
   const startRecording = () => {
