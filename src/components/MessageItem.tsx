@@ -94,7 +94,9 @@ export function MessageItem({
               <IconUser size={20} />
             </ThemeIcon>
           )}
-          {message.role === "assistant" && <LogoIcon style={{ height: 32 }} />}
+          {message.role === "assistant" && (
+            <LogoIcon style={{ width: 32, height: 32 }} />
+          )}
           <Box sx={{ flex: 1, width: 0 }} className="markdown">
             <ReactMarkdown
               children={message.content}
