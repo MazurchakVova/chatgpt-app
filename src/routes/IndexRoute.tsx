@@ -38,18 +38,16 @@ export function IndexRoute() {
                 {openAiApiKey ? "Изменить ключ OpenAI" : "Ввести ключ OpenAI"}
               </Button>
             </SettingsModal>
-            {!window.todesktop && (
+            {/* {!window.todesktop && (
               <Button
                 component="a"
-                // href="https://dl.todesktop.com/230313oyppkw40a"
-                // href="https://download.chatpad.ai/"
                 size="md"
                 variant="outline"
                 leftIcon={<IconCloudDownload size={20} />}
               >
                 Скачать десктоп приложение
               </Button>
-            )}
+            )} */}
           </Group>
         </Container>
       </Center>
