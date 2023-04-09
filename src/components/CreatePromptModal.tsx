@@ -86,7 +86,7 @@ export function CreatePromptModal({ content }: { content?: string }) {
             />
             <Textarea
               placeholder="Контент"
-              autosize
+              autosave
               minRows={5}
               maxRows={10}
               value={value}

@@ -39,6 +39,7 @@ import { CreatePromptModal } from "./CreatePromptModal";
 import { DatabaseModal } from "./DatabaseModal";
 import { Prompts } from "./Prompts";
 import { SettingsModal } from "./SettingsModal";
+import React from "react";
 
 declare global {
   interface Window {
@@ -78,7 +79,7 @@ export function Layout() {
           <Navbar.Section className="app-region-drag">
             <Box
               style={{
-                height: 60,
+                height: 0,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -92,7 +93,7 @@ export function Layout() {
                   size="sm"
                   color={theme.colors.gray[6]}
                   className="app-region-no-drag"
-                  sx={{ position: "fixed", right: 16 }}
+                  sx={{ position: "fixed", right: 16, top: 10 }}
                 />
               </MediaQuery>
             </Box>

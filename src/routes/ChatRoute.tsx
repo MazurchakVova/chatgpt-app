@@ -31,6 +31,7 @@ import { useActiveTextToSpeech } from "../hooks/useActiveTextToSpeech";
 import { TtsSettings, TtsSettingsModal } from "../components/TtsSettingsModal";
 
 import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
+import React from "react";
 
 declare global {
   interface Window {
@@ -358,6 +359,21 @@ export function ChatRoute() {
           )}
 
           <Flex gap="sm">
+            <TtsSettingsModal
+              settings={ttsSettings}
+              onChange={setTtsSettings}
+            />
+            <Button
+              size="md"
+              onClick={isRecording ? stopRecording : startRecording}
+              className={isMicActive ? "mic-active" : ""}
+            >
+              {isRecording ? (
+                <IconMicrophoneOff size={24} />
+              ) : (
+                <IconMicrophone size={24} />
+              )}
+            </Button>
             <div
               className={
                 isRecording ? "textarea-wrapper recording" : "textarea-wrapper"
@@ -367,7 +383,7 @@ export function ChatRoute() {
                 key={chatId}
                 sx={{ flex: 1 }}
                 placeholder="Напишите ваше сообщение..."
-                autosize
+                autosave
                 className={isRecording ? "textarea-recording" : ""}
                 autoFocus
                 disabled={submitting}
@@ -412,32 +428,15 @@ export function ChatRoute() {
                 }}
               />
             </div>
-            <Button
-              size="md"
-              onClick={isRecording ? stopRecording : startRecording}
-              className={isMicActive ? "mic-active" : ""}
-            >
-              {isRecording ? (
-                <IconMicrophoneOff size={24} />
-              ) : (
-                <IconMicrophone size={24} />
-              )}
-            </Button>
-            <TtsSettingsModal
-              settings={ttsSettings}
-              onChange={setTtsSettings}
-            />
 
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-              <Button
-                h="auto"
-                onClick={() => {
-                  submit();
-                }}
-              >
-                <AiOutlineSend />
-              </Button>
-            </MediaQuery>
+            <Button
+              h="auto"
+              onClick={() => {
+                submit();
+              }}
+            >
+              <AiOutlineSend />
+            </Button>
           </Flex>
         </Container>
       </Box>
