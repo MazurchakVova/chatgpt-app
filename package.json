@@ -1,11 +1,11 @@
 {
-  "name": "chatpad",
+  "name": "chatgpt",
   "private": true,
   "source": "src/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel",
-    "build": "parcel build"
+    "build": "parcel build src/index.html --dist-dir docs"
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.8.3",
