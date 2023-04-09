@@ -15,7 +15,7 @@ import { notifications } from "@mantine/notifications";
 import { useLiveQuery } from "dexie-react-hooks";
 import { findLast } from "lodash";
 import { nanoid } from "nanoid";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { AiOutlineSend } from "react-icons/ai";
 import { MessageItem } from "../components/MessageItem";
 import { db } from "../db";
@@ -30,7 +30,7 @@ import { createChatCompletion } from "../utils/openai";
 import { useActiveTextToSpeech } from "../hooks/useActiveTextToSpeech";
 import { TtsSettings, TtsSettingsModal } from "../components/TtsSettingsModal";
 
-import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
+// import { IconMicrophone, IconMicrophoneOff } from "@tabler/icons-react";
 
 declare global {
   interface Window {
@@ -50,7 +50,7 @@ export function ChatRoute() {
   }, [chatId]);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [interimTranscript, setInterimTranscript] = useState("");
+  // const [interimTranscript, setInterimTranscript] = useState("");
 
   const chat = useLiveQuery(async () => {
     if (!chatId) return null;
@@ -63,7 +63,7 @@ export function ChatRoute() {
   const [writingFormat, setWritingFormat] = useState<string | null>(null);
 
   const [isRecording, setIsRecording] = useState(false);
-  const [isMicActive, setIsMicActive] = useState(false);
+  // const [isMicActive, setIsMicActive] = useState(false);
 
   const recognitionRef = useRef<any | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -75,59 +75,59 @@ export function ChatRoute() {
     voice: null,
   });
 
-  useEffect(() => {
-    if (window.SpeechRecognition || (window as any).webkitSpeechRecognition) {
-      const SpeechRecognition =
-        window.SpeechRecognition || (window as any).webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.lang = "ru-RU";
-      recognitionRef.current.maxAlternatives = 1000;
+  // useEffect(() => {
+  //   if (window.SpeechRecognition || (window as any).webkitSpeechRecognition) {
+  //     const SpeechRecognition =
+  //       window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+  //     recognitionRef.current = new SpeechRecognition();
+  //     recognitionRef.current.interimResults = true;
+  //     recognitionRef.current.continuous = true;
+  //     recognitionRef.current.lang = "ru-RU";
+  //     recognitionRef.current.maxAlternatives = 1000;
 
-      recognitionRef.current.onerror = (event: any) =>
-        console.error(event.error);
+  //     recognitionRef.current.onerror = (event: any) =>
+  //       console.error(event.error);
 
-      recognitionRef.current.onresult = (event: any) => {
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
-          if (event.results[i].isFinal) {
-            setContent(
-              (prevState) => prevState + event.results[i][0].transcript
-            );
-            setInterimTranscript("");
-          } else {
-            setInterimTranscript(event.results[i][0].transcript);
-          }
-        }
-      };
+  //     recognitionRef.current.onresult = (event: any) => {
+  //       for (let i = event.resultIndex; i < event.results.length; ++i) {
+  //         if (event.results[i].isFinal) {
+  //           setContent(
+  //             (prevState) => prevState + event.results[i][0].transcript
+  //           );
+  //           setInterimTranscript("");
+  //         } else {
+  //           setInterimTranscript(event.results[i][0].transcript);
+  //         }
+  //       }
+  //     };
 
-      recognitionRef.current.onspeechstart = () => {
-        setIsMicActive(true);
-      };
+  //     recognitionRef.current.onspeechstart = () => {
+  //       setIsMicActive(true);
+  //     };
 
-      recognitionRef.current.onend = () => {
-        if (isRecording) {
-          recognitionRef.current.start();
-        } else {
-          setIsMicActive(false);
-          setContent((prevState) => prevState + interimTranscript);
-        }
-      };
-    } else {
-      console.log("API распознавания речи не поддерживается этим браузером");
-    }
-  }, []);
+  //     recognitionRef.current.onend = () => {
+  //       if (isRecording) {
+  //         recognitionRef.current.start();
+  //       } else {
+  //         setIsMicActive(false);
+  //         setContent((prevState) => prevState + interimTranscript);
+  //       }
+  //     };
+  //   } else {
+  //     console.log("API распознавания речи не поддерживается этим браузером");
+  //   }
+  // }, []);
 
-  const startRecording = () => {
-    recognitionRef.current?.start();
-    setIsRecording(true);
-  };
+  // const startRecording = () => {
+  //   recognitionRef.current?.start();
+  //   setIsRecording(true);
+  // };
 
-  const stopRecording = () => {
-    recognitionRef.current?.stop();
-    setIsRecording(false);
-    inputRef.current?.focus();
-  };
+  // const stopRecording = () => {
+  //   recognitionRef.current?.stop();
+  //   setIsRecording(false);
+  //   inputRef.current?.focus();
+  // };
 
   const getSystemMessage = () => {
     const message: string[] = [];
@@ -265,6 +265,8 @@ export function ChatRoute() {
 
   if (!chatId) return null;
 
+  console.log(recognitionRef.current);
+
   return (
     <>
       <Container pt="xl" pb={100}>
@@ -358,6 +360,20 @@ export function ChatRoute() {
           )}
 
           <Flex gap="sm">
+            <TtsSettingsModal
+              settings={ttsSettings}
+              onChange={setTtsSettings}
+            />
+            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+              <Button
+                h="auto"
+                onClick={() => {
+                  submit();
+                }}
+              >
+                <AiOutlineSend />
+              </Button>
+            </MediaQuery>
             <div
               className={
                 isRecording ? "textarea-wrapper recording" : "textarea-wrapper"
@@ -412,7 +428,7 @@ export function ChatRoute() {
                 }}
               />
             </div>
-            <Button
+            {/* <Button
               size="md"
               onClick={isRecording ? stopRecording : startRecording}
               className={isMicActive ? "mic-active" : ""}
@@ -422,22 +438,7 @@ export function ChatRoute() {
               ) : (
                 <IconMicrophone size={24} />
               )}
-            </Button>
-            <TtsSettingsModal
-              settings={ttsSettings}
-              onChange={setTtsSettings}
-            />
-
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-              <Button
-                h="auto"
-                onClick={() => {
-                  submit();
-                }}
-              >
-                <AiOutlineSend />
-              </Button>
-            </MediaQuery>
+            </Button> */}
           </Flex>
         </Container>
       </Box>

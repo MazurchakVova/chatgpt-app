@@ -1,9 +1,9 @@
 const { app, BrowserWindow } = require("electron");
-const {
-  default: installExtension,
-  REACT_DEVELOPER_TOOLS,
-  REDUX_DEVTOOLS,
-} = require("electron-devtools-installer");
+// const {
+//   default: installExtension,
+//   REACT_DEVELOPER_TOOLS,
+//   REDUX_DEVTOOLS,
+// } = require("electron-devtools-installer");
 const path = require("path");
 const isDev = require("electron-is-dev");
 
@@ -24,9 +24,11 @@ const createWindow = async () => {
     title: "Reactron",
     show: false,
     icon: getIcon(),
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 820,
     webPreferences: {
+      contextIsolation: true,
+      enableRemoteModule: false,
       nodeIntegration: true,
       webSecurity: false,
     },
@@ -41,7 +43,7 @@ const createWindow = async () => {
   mainWindow.once("ready-to-show", () => {
     mainWindow.show();
     if (isDev) {
-      installExtension(REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS);
+      // installExtension(REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS);
       mainWindow.webContents.openDevTools();
     }
   });

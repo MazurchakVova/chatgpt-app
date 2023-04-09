@@ -62,8 +62,6 @@ export const TtsSettingsModal: React.FC<TtsSettingsModalProps> = ({
     handleSubmit();
   };
 
-  console.log(settings.voice?.voiceURI);
-
   return (
     <>
       <Button onClick={() => setIsOpen(true)} size="md" color="gray">

@@ -71,7 +71,7 @@ export function MessageItem({
 
       speechSynthesis.speak(utterance);
     } else {
-      console.log("All text spoken");
+      // console.log("All text spoken");
       setIsPlaying(false);
     }
   }

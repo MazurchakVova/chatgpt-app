@@ -19,7 +19,9 @@ module.exports = {
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],
     "@typescript-eslint/indent": ["error", 2],
-
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "no-var": "error",
     "react/no-children-prop": "off",
     "react/prop-types": "error",
