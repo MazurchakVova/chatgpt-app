@@ -13,6 +13,7 @@ import {
 import { ChatRoute } from "../routes/ChatRoute";
 import { IndexRoute } from "../routes/IndexRoute";
 import { Layout } from "./Layout";
+import { useEffect } from "react";
 
 const history = createHashHistory();
 const location = new ReactLocation({ history });
@@ -30,6 +31,19 @@ export function App() {
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
   useHotkeys([["mod+J", () => toggleColorScheme()]]);
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register(new URL("sw.js", import.meta.url))
+        .then(() => {
+          console.log("Сервис-воркер успешно зарегистрирован");
+        })
+        .catch((error) => {
+          console.error("Ошибка при регистрации сервис-воркера:", error);
+        });
+    }
+  }, []);
 
   return (
     <Router

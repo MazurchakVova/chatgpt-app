@@ -7,6 +7,8 @@ import {
 } from "@tabler/icons-react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { SettingsModal } from "../components/SettingsModal";
+import InstallButton from "../components/InstallButton";
+
 import { db } from "../db";
 
 export function IndexRoute() {
@@ -18,6 +20,7 @@ export function IndexRoute() {
       <Center py="xl" sx={{ height: "100%" }}>
         <Container size="sm">
           <Badge mb="lg">GPT-4 Ready</Badge>
+          <InstallButton />
           <Group mt={10}>
             <SettingsModal>
               <Button
@@ -28,6 +31,7 @@ export function IndexRoute() {
                 {openAiApiKey ? "Изменить ключ OpenAI" : "Ввести ключ OpenAI"}
               </Button>
             </SettingsModal>
+            <InstallButton />
           </Group>
         </Container>
       </Center>

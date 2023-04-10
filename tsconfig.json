@@ -1,10 +1,17 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
+    "module": "es2020",
+    "target": "es6",
+    "moduleResolution": "node",
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "lib": ["es2018", "dom"],
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@mantine/*": ["node_modules/@mantine/*"]
+    }
   }
 }
