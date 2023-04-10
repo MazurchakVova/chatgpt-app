@@ -2,9 +2,10 @@
   "name": "ChatGPT",
   "short_name": "chatgpt",
   "description": "ChatGPT",
-  "lang": "ru",
-  "start_url": "/",
   "display": "standalone",
+  "scope": "/",
+  "start_url": ".",
+  "lang": "ru",
   "background_color": "#ffffff",
   "theme_color": "#000000",
   "icons": [
