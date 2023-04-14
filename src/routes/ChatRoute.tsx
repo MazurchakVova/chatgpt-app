@@ -382,7 +382,6 @@ export function ChatRoute() {
                 key={chatId}
                 sx={{ flex: 1 }}
                 placeholder="Напишите ваше сообщение..."
-                autosave={true}
                 autosize={true}
                 autoFocus={true}
                 className={isRecording ? "textarea-recording" : ""}
