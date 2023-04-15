@@ -21,6 +21,7 @@ import { MessageItem } from "../components/MessageItem";
 import { db } from "../db";
 import { useChatId } from "../hooks/useChatId";
 import {
+  writingBreaks,
   writingCharacters,
   writingFormats,
   writingStyles,
@@ -57,6 +58,7 @@ export function ChatRoute() {
     return db.chats.get(chatId);
   }, [chatId]);
 
+  const [writingBreak, setWritingBreak] = useState<string | null>(null);
   const [writingCharacter, setWritingCharacter] = useState<string | null>(null);
   const [writingTone, setWritingTone] = useState<string | null>(null);
   const [writingStyle, setWritingStyle] = useState<string | null>(null);
@@ -131,6 +133,7 @@ export function ChatRoute() {
 
   const getSystemMessage = () => {
     const message: string[] = [];
+    if (writingBreak) message.push(`You are ${writingBreak}.`);
     if (writingCharacter) message.push(`You are ${writingCharacter}.`);
     if (writingTone) message.push(`Respond in ${writingTone} tone.`);
     if (writingStyle) message.push(`Respond in ${writingStyle} style.`);
@@ -310,10 +313,20 @@ export function ChatRoute() {
               mb="sm"
               spacing="xs"
               breakpoints={[
-                { minWidth: "sm", cols: 4 },
+                { minWidth: "sm", cols: 5 },
                 { maxWidth: "sm", cols: 2 },
               ]}
             >
+              <Select
+                value={writingBreak}
+                onChange={setWritingBreak}
+                data={writingBreaks}
+                placeholder="Модель"
+                variant="filled"
+                searchable
+                clearable
+                sx={{ flex: 1 }}
+              />
               <Select
                 value={writingCharacter}
                 onChange={setWritingCharacter}
